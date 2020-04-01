@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:async/async.dart';
+import 'dart:async';
 import 'dart:convert';
 
 const request = "https://api.hgbrasil.com/finance?array_limit=1&fields=only_results,currencies&key=3014b5b6";
 
 void main() async{
-  http.Response response = await http.get(request);
-  print(json.decode(response.body)["currencies"]["USD"]);
-
+  //print(await getData());
   runApp(MeuApp());
+}
+
+Future<Map> getData() async {
+  http.Response response = await http.get(request);
+  return json.decode(response.body);
 }
 
 class MeuApp extends StatelessWidget {
