@@ -48,6 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final euroController = TextEditingController();
   final libraController = TextEditingController();
   final bitcoinController = TextEditingController();
+  GlobalKey<FormState> _keyForm = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -102,41 +103,45 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _buildBody() {
     return Center(
       child: SingleChildScrollView(
-        padding: EdgeInsets.only(right: 10, left: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: Icon(
-                Icons.monetization_on,
-                color: Colors.amber,
-                size: 130.0,
-              ),
+          padding: EdgeInsets.only(right: 10, left: 10),
+          child: Form(
+            key: _keyForm,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Icon(
+                    Icons.monetization_on,
+                    color: Colors.amber,
+                    size: 130.0,
+                  ),
+                ),
+                _generateInputText("Reais", "R\$", realController, _realChange),
+                Divider(),
+                _generateInputText(
+                    "Dólares", "US\$", dolarController, _dolarChange),
+                Divider(),
+                _generateInputText("Euros", "€", euroController, _euroChange),
+                Divider(),
+                _generateInputText(
+                    "Libras", "£", libraController, _libraChange),
+                Divider(),
+                _generateInputText(
+                    "Bitcoins", "₿", bitcoinController, _bitcoinChange)
+              ],
             ),
-            _generateInputText("Reais", "R\$", realController, _realChange),
-            Divider(),
-            _generateInputText(
-                "Dólares", "US\$", dolarController, _dolarChange),
-            Divider(),
-            _generateInputText("Euros", "€", euroController, _euroChange),
-            Divider(),
-            _generateInputText("Libras", "£", libraController, _libraChange),
-            Divider(),
-            _generateInputText(
-                "Bitcoins", "₿", bitcoinController, _bitcoinChange)
-          ],
-        ),
-      ),
+          )),
     );
   }
 
   Widget _generateInputText(String labelText, String prefixText,
       TextEditingController myController, Function myFunction) {
-    return TextField(
+    return TextFormField(
       controller: myController,
       onChanged: myFunction,
       keyboardType: TextInputType.number,
+      validator: (value) => _validate(value),
       style: TextStyle(color: Colors.amber, fontSize: 25.0),
       decoration: InputDecoration(
           labelText: (labelText),
@@ -153,7 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _realChange(String texto) {
     if (texto == "") {
       _clearAll();
-    } else {
+    } else if (_keyForm.currentState.validate()) {
       double valorReais = double.parse(texto);
       _convertToString(dolarController, valorReais / _dolar);
       _convertToString(euroController, valorReais / _euro);
@@ -165,7 +170,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _dolarChange(String texto) {
     if (texto == "") {
       _clearAll();
-    } else {
+    } else if (_keyForm.currentState.validate()) {
       double valorDolar = double.parse(texto);
       _convertToString(realController, valorDolar * _dolar);
       _convertToString(euroController, valorDolar * _dolar / _euro);
@@ -177,7 +182,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _euroChange(String texto) {
     if (texto == "") {
       _clearAll();
-    } else {
+    } else if (_keyForm.currentState.validate()) {
       double valorEuro = double.parse(texto);
       _convertToString(realController, valorEuro * _euro);
       _convertToString(dolarController, valorEuro * _euro / _dolar);
@@ -189,7 +194,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _libraChange(String texto) {
     if (texto == "") {
       _clearAll();
-    } else {
+    } else if (_keyForm.currentState.validate()) {
       double valorLibra = double.parse(texto);
       _convertToString(realController, valorLibra * _libras);
       _convertToString(dolarController, valorLibra * _libras / _dolar);
@@ -201,7 +206,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _bitcoinChange(String texto) {
     if (texto == "") {
       _clearAll();
-    } else {
+    } else if (_keyForm.currentState.validate()) {
       double valorBitcoins = double.parse(texto);
       _convertToString(realController, valorBitcoins * _bitcoin);
       _convertToString(dolarController, valorBitcoins * _bitcoin / _dolar);
@@ -215,6 +220,20 @@ class _MyHomePageState extends State<MyHomePage> {
       controller.text = value.toStringAsPrecision(2);
     } else {
       controller.text = value.toStringAsFixed(2);
+    }
+  }
+
+  // ignore: missing_return
+  String _validate(String value) {
+    if (value.length > 0) {
+      try {
+        double doubleValue = double.parse(value);
+        if (doubleValue < 0) {
+          return "Valor inválido!";
+        }
+      } catch (erro) {
+        return "Valor inválido!";
+      }
     }
   }
 
