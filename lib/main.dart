@@ -3,11 +3,10 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 
-const request =
-    "https://api.hgbrasil.com/finance?array_limit=1&fields=only_results,currencies&key=3014b5b6";
+const request = "https://api.hgbrasil.com/finance?" +
+    "array_limit=1&fields=only_results,currencies&key=3014b5b6";
 
 void main() async {
-  //print(await getData());
   runApp(MeuApp());
 }
 
@@ -20,18 +19,19 @@ class MeuApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "conversor_de_moedas",
+      title: "Conversor de Moedas",
       home: MyHomePage(),
       theme: ThemeData(
-          hintColor: Colors.amber,
-          primaryColor: Colors.white,
-          inputDecorationTheme: InputDecorationTheme(
-            enabledBorder:
-                OutlineInputBorder(borderSide: BorderSide(color: Colors.amber)),
-            focusedBorder:
-                OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-            hintStyle: TextStyle(color: Colors.amber),
-          )),
+        hintColor: Colors.amber,
+        primaryColor: Colors.white,
+        inputDecorationTheme: InputDecorationTheme(
+          enabledBorder:
+              OutlineInputBorder(borderSide: BorderSide(color: Colors.amber)),
+          focusedBorder:
+              OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+          hintStyle: TextStyle(color: Colors.amber),
+        ),
+      ),
     );
   }
 }
@@ -42,8 +42,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  double _dolar = 0;
-  double _euro = 0;
+  double _dolar, _euro, _libras, _bitcoin;
 
   @override
   Widget build(BuildContext context) {
@@ -52,26 +51,25 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: Colors.amber,
         centerTitle: true,
-        title: Text("\$ Conversor \$", textAlign: TextAlign.center),
+        title: Text("\$ Conversor \$"),
       ),
       body: FutureBuilder<Map>(
         future: _getData(),
-        builder: (context, snapshot) => _buildResponse(context, snapshot),
+        builder: (context, snapshot) => _buildResponse(snapshot),
       ),
     );
   }
 
-  Widget _buildResponse(context, snapshot) {
+  Widget _buildResponse(AsyncSnapshot<Map> snapshot) {
     switch (snapshot.connectionState) {
       case ConnectionState.none:
       case ConnectionState.waiting:
-        return _buildText("Carregando, aguarde...");
+        return _buildText("Carregando, aguarde...", Colors.amber);
         break;
       default:
         if (snapshot.hasError) {
-          return _buildText("Erro ao carregar dados");
+          return _buildText("Erro ao carregar dados...", Colors.red);
         } else {
-          print(snapshot.data["currencies"]);
           _refreshResults(snapshot.data["currencies"]);
           return _buildBody();
         }
@@ -79,12 +77,12 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Widget _buildText(String text) {
+  Widget _buildText(String texto, Color cor) {
     return Center(
       child: Text(
-        text,
-        style: TextStyle(color: Colors.amber, fontSize: 30),
+        texto,
         textAlign: TextAlign.center,
+        style: TextStyle(color: cor, fontSize: 30),
       ),
     );
   }
@@ -92,6 +90,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void _refreshResults(Map data) {
     _dolar = data["USD"]["buy"];
     _euro = data["EUR"]["buy"];
+    _libras = data[""]["buy"];
+    _bitcoin = data[""]["buy"];
   }
 
   Widget _buildBody() {
@@ -108,21 +108,21 @@ class _MyHomePageState extends State<MyHomePage> {
               size: 130.0,
             ),
           ),
-          _gerarCampoTexto("Reais", "R\$"),
+          _generateInputText("Reais", "R\$"),
           Divider(),
-          _gerarCampoTexto("Dólares", "US\$"),
+          _generateInputText("Dólares", "US\$"),
           Divider(),
-          _gerarCampoTexto("Euros", "€"),
+          _generateInputText("Euros", "€"),
           Divider(),
-          _gerarCampoTexto("Libras", "£"),
+          _generateInputText("Libras", "£"),
           Divider(),
-          _gerarCampoTexto("Bitcoins", "₿")
+          _generateInputText("Bitcoins", "₿")
         ],
       ),
     );
   }
 
-  Widget _gerarCampoTexto(String labelText, String prefixText) {
+  Widget _generateInputText(String labelText, String prefixText) {
     return TextField(
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
