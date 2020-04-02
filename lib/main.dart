@@ -49,82 +49,6 @@ class _MyHomePageState extends State<MyHomePage> {
   final libraController = TextEditingController();
   final bitcoinController = TextEditingController();
 
-  void _realChange(String texto) {
-    if (texto == ""){
-      _clearAll();
-    } else {
-      double valorReais = double.parse(texto);
-      _convertToString(dolarController, valorReais / _dolar);
-      _convertToString(euroController, valorReais / _euro);
-      _convertToString(libraController, valorReais / _libras);
-      _convertToString(bitcoinController, valorReais / _bitcoin);
-    }
-  }
-
-  void _dolarChange(String texto) {
-    if (texto == ""){
-      _clearAll();
-    } else {
-      double valorDolar = double.parse(texto);
-      _convertToString(realController, valorDolar * _dolar);
-      _convertToString(euroController, valorDolar * _dolar / _euro);
-      _convertToString(libraController, valorDolar * _dolar / _libras);
-      _convertToString(bitcoinController, valorDolar * _dolar / _bitcoin);
-    }
-  }
-
-  void _euroChange(String texto) {
-    if (texto == ""){
-      _clearAll();
-    } else {
-      double valorEuro = double.parse(texto);
-      _convertToString(realController, valorEuro * _euro);
-      _convertToString(dolarController, valorEuro * _euro / _dolar);
-      _convertToString(libraController, valorEuro * _euro / _libras);
-      _convertToString(bitcoinController, valorEuro * _euro / _bitcoin);
-    }
-  }
-
-  void _libraChange(String texto) {
-    if (texto == ""){
-      _clearAll();
-    } else {
-      double valorLibra = double.parse(texto);
-      _convertToString(realController, valorLibra * _libras);
-      _convertToString(dolarController, valorLibra * _libras / _dolar);
-      _convertToString(euroController, valorLibra * _libras / _euro);
-      _convertToString(bitcoinController, valorLibra * _libras / _bitcoin);
-    }
-  }
-
-  void _bitcoinChange(String texto) {
-    if (texto == ""){
-      _clearAll();
-    } else {
-      double valorBitcoins = double.parse(texto);
-      _convertToString(realController, valorBitcoins * _bitcoin);
-      _convertToString(dolarController, valorBitcoins * _bitcoin / _dolar);
-      _convertToString(libraController, valorBitcoins * _bitcoin / _libras);
-      _convertToString(euroController, valorBitcoins * _bitcoin / _euro);
-    }
-  }
-
-  void _convertToString(TextEditingController controller, double value) {
-    if (value < 1) {
-      controller.text = value.toStringAsPrecision(2);
-    } else {
-      controller.text = value.toStringAsFixed(2);
-    }
-  }
-
-  void _clearAll(){
-      realController.clear();
-      dolarController.clear();
-      euroController.clear();
-      libraController.clear();
-      bitcoinController.clear();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -183,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.only(bottom: 20),
               child: Icon(
                 Icons.monetization_on,
                 color: Colors.amber,
@@ -224,5 +148,81 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: _clearAll,
           )),
     );
+  }
+
+  void _realChange(String texto) {
+    if (texto == "") {
+      _clearAll();
+    } else {
+      double valorReais = double.parse(texto);
+      _convertToString(dolarController, valorReais / _dolar);
+      _convertToString(euroController, valorReais / _euro);
+      _convertToString(libraController, valorReais / _libras);
+      _convertToString(bitcoinController, valorReais / _bitcoin);
+    }
+  }
+
+  void _dolarChange(String texto) {
+    if (texto == "") {
+      _clearAll();
+    } else {
+      double valorDolar = double.parse(texto);
+      _convertToString(realController, valorDolar * _dolar);
+      _convertToString(euroController, valorDolar * _dolar / _euro);
+      _convertToString(libraController, valorDolar * _dolar / _libras);
+      _convertToString(bitcoinController, valorDolar * _dolar / _bitcoin);
+    }
+  }
+
+  void _euroChange(String texto) {
+    if (texto == "") {
+      _clearAll();
+    } else {
+      double valorEuro = double.parse(texto);
+      _convertToString(realController, valorEuro * _euro);
+      _convertToString(dolarController, valorEuro * _euro / _dolar);
+      _convertToString(libraController, valorEuro * _euro / _libras);
+      _convertToString(bitcoinController, valorEuro * _euro / _bitcoin);
+    }
+  }
+
+  void _libraChange(String texto) {
+    if (texto == "") {
+      _clearAll();
+    } else {
+      double valorLibra = double.parse(texto);
+      _convertToString(realController, valorLibra * _libras);
+      _convertToString(dolarController, valorLibra * _libras / _dolar);
+      _convertToString(euroController, valorLibra * _libras / _euro);
+      _convertToString(bitcoinController, valorLibra * _libras / _bitcoin);
+    }
+  }
+
+  void _bitcoinChange(String texto) {
+    if (texto == "") {
+      _clearAll();
+    } else {
+      double valorBitcoins = double.parse(texto);
+      _convertToString(realController, valorBitcoins * _bitcoin);
+      _convertToString(dolarController, valorBitcoins * _bitcoin / _dolar);
+      _convertToString(libraController, valorBitcoins * _bitcoin / _libras);
+      _convertToString(euroController, valorBitcoins * _bitcoin / _euro);
+    }
+  }
+
+  void _convertToString(TextEditingController controller, double value) {
+    if (value < 1) {
+      controller.text = value.toStringAsPrecision(2);
+    } else {
+      controller.text = value.toStringAsFixed(2);
+    }
+  }
+
+  void _clearAll() {
+    realController.clear();
+    dolarController.clear();
+    euroController.clear();
+    libraController.clear();
+    bitcoinController.clear();
   }
 }
