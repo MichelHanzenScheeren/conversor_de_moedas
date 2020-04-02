@@ -43,6 +43,87 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   double _dolar, _euro, _libras, _bitcoin;
+  final realController = TextEditingController();
+  final dolarController = TextEditingController();
+  final euroController = TextEditingController();
+  final libraController = TextEditingController();
+  final bitcoinController = TextEditingController();
+
+  void _realChange(String texto) {
+    if (texto == ""){
+      _clearAll();
+    } else {
+      double valorReais = double.parse(texto);
+      _convertToString(dolarController, valorReais / _dolar);
+      _convertToString(euroController, valorReais / _euro);
+      _convertToString(libraController, valorReais / _libras);
+      _convertToString(bitcoinController, valorReais / _bitcoin);
+    }
+  }
+
+  void _dolarChange(String texto) {
+    if (texto == ""){
+      _clearAll();
+    } else {
+      double valorDolar = double.parse(texto);
+      _convertToString(realController, valorDolar * _dolar);
+      _convertToString(euroController, valorDolar * _dolar / _euro);
+      _convertToString(libraController, valorDolar * _dolar / _libras);
+      _convertToString(bitcoinController, valorDolar * _dolar / _bitcoin);
+    }
+  }
+
+  void _euroChange(String texto) {
+    if (texto == ""){
+      _clearAll();
+    } else {
+      double valorEuro = double.parse(texto);
+      _convertToString(realController, valorEuro * _euro);
+      _convertToString(dolarController, valorEuro * _euro / _dolar);
+      _convertToString(libraController, valorEuro * _euro / _libras);
+      _convertToString(bitcoinController, valorEuro * _euro / _bitcoin);
+    }
+  }
+
+  void _libraChange(String texto) {
+    if (texto == ""){
+      _clearAll();
+    } else {
+      double valorLibra = double.parse(texto);
+      _convertToString(realController, valorLibra * _libras);
+      _convertToString(dolarController, valorLibra * _libras / _dolar);
+      _convertToString(euroController, valorLibra * _libras / _euro);
+      _convertToString(bitcoinController, valorLibra * _libras / _bitcoin);
+    }
+  }
+
+  void _bitcoinChange(String texto) {
+    if (texto == ""){
+      _clearAll();
+    } else {
+      double valorBitcoins = double.parse(texto);
+      _convertToString(realController, valorBitcoins * _bitcoin);
+      _convertToString(dolarController, valorBitcoins * _bitcoin / _dolar);
+      _convertToString(libraController, valorBitcoins * _bitcoin / _libras);
+      _convertToString(euroController, valorBitcoins * _bitcoin / _euro);
+    }
+  }
+
+  void _convertToString(TextEditingController controller, double value) {
+    if (value < 1) {
+      controller.text = value.toStringAsPrecision(2);
+    } else {
+      controller.text = value.toStringAsFixed(2);
+    }
+  }
+
+  void _clearAll(){
+      realController.clear();
+      dolarController.clear();
+      euroController.clear();
+      libraController.clear();
+      bitcoinController.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,47 +171,58 @@ class _MyHomePageState extends State<MyHomePage> {
   void _refreshResults(Map data) {
     _dolar = data["USD"]["buy"];
     _euro = data["EUR"]["buy"];
-    _libras = data[""]["buy"];
-    _bitcoin = data[""]["buy"];
+    _libras = data["GBP"]["buy"];
+    _bitcoin = data["BTC"]["buy"];
   }
 
   Widget _buildBody() {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: Icon(
-              Icons.monetization_on,
-              color: Colors.amber,
-              size: 130.0,
+    return Center(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.only(right: 10, left: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Icon(
+                Icons.monetization_on,
+                color: Colors.amber,
+                size: 130.0,
+              ),
             ),
-          ),
-          _generateInputText("Reais", "R\$"),
-          Divider(),
-          _generateInputText("Dólares", "US\$"),
-          Divider(),
-          _generateInputText("Euros", "€"),
-          Divider(),
-          _generateInputText("Libras", "£"),
-          Divider(),
-          _generateInputText("Bitcoins", "₿")
-        ],
+            _generateInputText("Reais", "R\$", realController, _realChange),
+            Divider(),
+            _generateInputText(
+                "Dólares", "US\$", dolarController, _dolarChange),
+            Divider(),
+            _generateInputText("Euros", "€", euroController, _euroChange),
+            Divider(),
+            _generateInputText("Libras", "£", libraController, _libraChange),
+            Divider(),
+            _generateInputText(
+                "Bitcoins", "₿", bitcoinController, _bitcoinChange)
+          ],
+        ),
       ),
     );
   }
 
-  Widget _generateInputText(String labelText, String prefixText) {
+  Widget _generateInputText(String labelText, String prefixText,
+      TextEditingController myController, Function myFunction) {
     return TextField(
+      controller: myController,
+      onChanged: myFunction,
       keyboardType: TextInputType.number,
+      style: TextStyle(color: Colors.amber, fontSize: 25.0),
       decoration: InputDecoration(
           labelText: (labelText),
           labelStyle: TextStyle(color: Colors.amber, fontSize: 25),
           border: OutlineInputBorder(),
-          prefixText: prefixText),
-      style: TextStyle(color: Colors.amber, fontSize: 25.0),
+          prefixText: prefixText,
+          suffixIcon: IconButton(
+            icon: Icon(Icons.clear),
+            onPressed: _clearAll,
+          )),
     );
   }
 }
